@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from PIL import Image
 import matplotlib.pyplot as plt
 import os
@@ -141,6 +142,15 @@ for batch in range(9):
 
 #image transformations
 transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
+=======
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+
+#image resize
+transform = transforms.Compose([transforms.Resize((224, 224)),transforms.ToTensor()])
+
+>>>>>>> refs/remotes/origin/main
 
 #path dataset folders
 train_dir = "dataset_split/train"
