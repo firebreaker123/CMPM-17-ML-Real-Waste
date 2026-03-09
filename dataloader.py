@@ -157,12 +157,16 @@ train_dir = "dataset_split/train"
 val_dir = "dataset_split/val"
 test_dir = "dataset_split/test"
 
+if torch.cuda.is_available():
+    device = 'cuda'
+    print('CUDA is available. Using GPU.')
+else:
+    device = 'cpu'
 
 #new dataset folders
 train_dataset = datasets.ImageFolder(root=train_dir, transform=transformTrain)
 val_dataset = datasets.ImageFolder(root=val_dir, transform=transform)
 test_dataset = datasets.ImageFolder(root=test_dir, transform=transform)
- 
 
 """
 #metrics
@@ -238,12 +242,6 @@ class Convnet(nn.Module):
 
 model = Convnet()
 
-if torch.cuda.is_available():
-    device = 'cuda'
-    print('CUDA is available. Using GPU.')
-else:
-    device = 'cpu'
-
 model.to(device)
 
 criterion = nn.CrossEntropyLoss()
@@ -254,6 +252,9 @@ NUM_EPOCHS = 50
 for epoch in range(NUM_EPOCHS):
     
     for train_x, train_y in train_loader:
+        train_x.to(device)
+        train_y.to(device)
+
         train_preds = model(train_x)
         loss = criterion(train_preds, train_y)
 
@@ -270,6 +271,9 @@ for epoch in range(NUM_EPOCHS):
     print(f"Epoch {epoch} | Loss: {loss.item()}")
 
     for val_x, val_y in val_loader:
+        val_x.to(device)
+        val_y.to(device)
+        
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
 
@@ -281,6 +285,9 @@ print("\n------------------------Testing Phase-----------------------------\n")
 with torch.no_grad():
 
     for test_x, test_y in test_loader:
+        test_x.to(device)
+        test_y.to(device)
+        
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
 
