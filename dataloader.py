@@ -1,5 +1,5 @@
 from PIL import Image
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import torch
@@ -149,7 +149,8 @@ for batch in range(9):
 """
 
 #image transformations
-transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
+transformTrain = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
+transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224))])
 
 #path dataset folders
 train_dir = "dataset_split/train"
@@ -158,7 +159,7 @@ test_dir = "dataset_split/test"
 
 
 #new dataset folders
-train_dataset = datasets.ImageFolder(root=train_dir, transform=transform)
+train_dataset = datasets.ImageFolder(root=train_dir, transform=transformTrain)
 val_dataset = datasets.ImageFolder(root=val_dir, transform=transform)
 test_dataset = datasets.ImageFolder(root=test_dir, transform=transform)
  
@@ -187,22 +188,6 @@ train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
 
-class Convnet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
-        self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
-        self.conv4 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
-        
-        self.relu = nn.ReLU()
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-
-        self.linear1 = nn.Linear(128 * 14 * 14, 1028)
-        self.linear2 = nn.Linear(1028, 9)
-        
-
-
 """
 #loops
 print("train")
@@ -222,3 +207,82 @@ for inputs, labels in test_loader:
     print(inputs)
     print(labels)
 """
+
+class Convnet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
+        self.conv4 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
+        
+        self.relu = nn.ReLU()
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+
+        self.linear1 = nn.Linear(128 * 14 * 14, 1028)
+        self.linear2 = nn.Linear(1028, 9)
+        
+    def forward(self, X):
+        X = self.relu(self.conv1(X))
+        X = self.pool(X)
+        X = self.relu(self.conv2(X))
+        X = self.pool(X)
+        X = self.relu(self.conv3(X))
+        X = self.pool(X)
+        X = self.relu(self.conv4(X))
+        X = self.pool(X)
+        X = X.flatten(start_dim=1)
+        X = self.relu(self.linear1(X))
+        output = self.linear2(X)
+        return output
+
+model = Convnet()
+
+if torch.cuda.is_available():
+    device = 'cuda'
+    print('CUDA is available. Using GPU.')
+else:
+    device = 'cpu'
+
+model.to(device)
+
+criterion = nn.CrossEntropyLoss()
+
+optimizer = optim.Adam(model.parameters(), lr=0.002)
+NUM_EPOCHS = 0
+
+for epoch in range(NUM_EPOCHS):
+    
+    for train_x, train_y in train_loader:
+        train_preds = model(train_x)
+        loss = criterion(train_preds, train_y)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        class_preds = train_preds > 0
+   
+    print("\n------------------------Training Phase-----------------------------\n")
+    print(f"Epoch {epoch} | Loss: {loss.item()}")
+
+    print("\n------------------------Validation Phase-----------------------------\n")
+    print(f"Epoch {epoch} | Loss: {loss.item()}")
+
+    for val_x, val_y in val_loader:
+        val_preds = model(val_x)
+        loss = criterion(val_preds, val_y)
+
+        class_preds = val_preds > 0
+
+print("\n------------------------Testing Phase-----------------------------\n")
+
+# Testing Loop
+with torch.no_grad():
+
+    for test_x, test_y in test_loader:
+        test_preds = model(test_x)
+        loss = criterion(test_preds, test_y)
+
+        class_preds = test_preds > 0
+    print(f"Loss: {loss.item()}")
