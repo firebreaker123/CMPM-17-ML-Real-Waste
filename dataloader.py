@@ -252,8 +252,8 @@ NUM_EPOCHS = 50
 for epoch in range(NUM_EPOCHS):
     
     for train_x, train_y in train_loader:
-        train_x.to(device)
-        train_y.to(device)
+        train_x = train_x.to(device)
+        train_y = train_y.to(device)
 
         train_preds = model(train_x)
         loss = criterion(train_preds, train_y)
