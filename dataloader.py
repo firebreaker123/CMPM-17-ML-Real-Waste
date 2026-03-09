@@ -1,8 +1,14 @@
-<<<<<<< HEAD
 from PIL import Image
 import matplotlib.pyplot as plt
 import os
-
+import pandas as pd
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import Dataset, DataLoader
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+import math
 from torchvision import datasets, transforms
 from torchvision.transforms import v2
 from torch.utils.data import DataLoader
@@ -142,15 +148,6 @@ for batch in range(9):
 
 #image transformations
 transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
-=======
-from torchvision import datasets, transforms
-from torch.utils.data import DataLoader
-
-
-#image resize
-transform = transforms.Compose([transforms.Resize((224, 224)),transforms.ToTensor()])
-
->>>>>>> refs/remotes/origin/main
 
 #path dataset folders
 train_dir = "dataset_split/train"
@@ -186,6 +183,22 @@ print("Label name:", train_dataset.classes[label])
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
+
+class Convnet(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
+        self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
+        self.conv4 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
+        
+        self.relu = nn.ReLU()
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+
+        self.linear1 = nn.Linear(128 * 14 * 14, 1028)
+        self.linear2 = nn.Linear(1028, 9)
+        
+
 
 
 #loops
