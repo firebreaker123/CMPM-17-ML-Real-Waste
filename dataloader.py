@@ -1,7 +1,7 @@
 from PIL import Image
 #import matplotlib.pyplot as plt
 import os
-import pandas as pd
+#import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
