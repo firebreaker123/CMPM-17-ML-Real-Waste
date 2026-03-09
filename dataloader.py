@@ -271,8 +271,8 @@ for epoch in range(NUM_EPOCHS):
     print(f"Epoch {epoch} | Loss: {loss.item()}")
 
     for val_x, val_y in val_loader:
-        val_x.to(device)
-        val_y.to(device)
+        val_x = val_x.to(device)
+        val_y = val_y.to(device)
         
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
@@ -285,8 +285,8 @@ print("\n------------------------Testing Phase-----------------------------\n")
 with torch.no_grad():
 
     for test_x, test_y in test_loader:
-        test_x.to(device)
-        test_y.to(device)
+        test_x = test_x.to(device)
+        test_y = test_y.to(device)
         
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
