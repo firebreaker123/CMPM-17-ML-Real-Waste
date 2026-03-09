@@ -26,6 +26,7 @@ plasticDirectory = "dataset/Plastic/"
 textTrashDirectory = "dataset/Textile Trash/"
 vegetationDirectory = "dataset/Vegetation/"
 
+"""
 images = []
 labels = []
 
@@ -145,6 +146,7 @@ for batch in range(9):
     plt.show()
 
     nextBatch = nextBatch + 15
+"""
 
 #image transformations
 transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
@@ -161,7 +163,7 @@ val_dataset = datasets.ImageFolder(root=val_dir, transform=transform)
 test_dataset = datasets.ImageFolder(root=test_dir, transform=transform)
  
 
-
+"""
 #metrics
 print("Train size:", len(train_dataset))
 print("Validation size:", len(val_dataset))
@@ -172,12 +174,13 @@ print("Test size:", len(test_dataset))
 print(train_dataset.class_to_idx)
 
 
+
 #check
 image, label = train_dataset[0]
 print("Image shape:", image.shape)
 print("Label index:", label)              
 print("Label name:", train_dataset.classes[label])
-
+"""
 
 #dataLoaders for each dataset
 train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
@@ -200,7 +203,7 @@ class Convnet(nn.Module):
         
 
 
-
+"""
 #loops
 print("train")
 for inputs, labels in train_loader:
@@ -218,3 +221,4 @@ print("test")
 for inputs, labels in test_loader:
     print(inputs)
     print(labels)
+"""
