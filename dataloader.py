@@ -247,10 +247,12 @@ model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 50
+NUM_EPOCHS = 1
 
 for epoch in range(NUM_EPOCHS):
-    
+
+    num_correct = 0
+    """
     for train_x, train_y in train_loader:
         train_x = train_x.to(device)
         train_y = train_y.to(device)
@@ -261,14 +263,11 @@ for epoch in range(NUM_EPOCHS):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-        class_preds = train_preds > 0
    
     print("\n------------------------Training Phase-----------------------------\n")
     print(f"Epoch {epoch} | Loss: {loss.item()}")
-
+    """
     print("\n------------------------Validation Phase-----------------------------\n")
-    print(f"Epoch {epoch} | Loss: {loss.item()}")
 
     for val_x, val_y in val_loader:
         val_x = val_x.to(device)
@@ -277,7 +276,12 @@ for epoch in range(NUM_EPOCHS):
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
 
-        class_preds = val_preds > 0
+        class_preds = torch.max(val_preds, axis=1)
+        num_correct = num_correct + (class_preds == val_y)
+    
+    accuracy = num_correct/len(val_dataset)
+
+    print(f"Epoch {epoch} | Loss: {loss.item()} Accuracy {accuracy * 100}")
 
 print("\n------------------------Testing Phase-----------------------------\n")
 
@@ -291,5 +295,9 @@ with torch.no_grad():
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
 
-        class_preds = test_preds > 0
-    print(f"Loss: {loss.item()}")
+        class_preds = torch.max(test_preds, axis=1)
+        num_correct = (class_preds == test_y)
+    
+    accuracy = num_correct/len(test_dataset)
+
+    print(f"Loss: {loss.item()} Accuracy {accuracy * 100}")
