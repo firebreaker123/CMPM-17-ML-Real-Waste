@@ -247,12 +247,12 @@ model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 1
+NUM_EPOCHS = 20
 
 for epoch in range(NUM_EPOCHS):
 
     num_correct = 0
-    """
+    
     for train_x, train_y in train_loader:
         train_x = train_x.to(device)
         train_y = train_y.to(device)
@@ -266,7 +266,7 @@ for epoch in range(NUM_EPOCHS):
    
     print("\n------------------------Training Phase-----------------------------\n")
     print(f"Epoch {epoch} | Loss: {loss.item()}")
-    """
+    
     print("\n------------------------Validation Phase-----------------------------\n")
 
     for val_x, val_y in val_loader:
