@@ -276,8 +276,8 @@ for epoch in range(NUM_EPOCHS):
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
 
-        class_preds = torch.max(val_preds, axis=1)
-        num_correct = num_correct + (class_preds == val_y)
+        _, class_preds = torch.max(val_preds, dim=1)
+        num_correct = num_correct + (class_preds == val_y).sum()
     
     accuracy = num_correct/len(val_dataset)
 
@@ -295,8 +295,8 @@ with torch.no_grad():
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
 
-        class_preds = torch.max(test_preds, axis=1)
-        num_correct = (class_preds == test_y)
+        _, class_preds = torch.max(test_preds, dim=1)
+        num_correct = num_correct + (class_preds == test_y).sum()
     
     accuracy = num_correct/len(test_dataset)
 
