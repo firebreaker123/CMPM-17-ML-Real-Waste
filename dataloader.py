@@ -253,6 +253,7 @@ for epoch in range(NUM_EPOCHS):
 
     num_correct = 0
     
+    # Training Loop
     for train_x, train_y in train_loader:
         train_x = train_x.to(device)
         train_y = train_y.to(device)
@@ -269,6 +270,7 @@ for epoch in range(NUM_EPOCHS):
     
     print("\n------------------------Validation Phase-----------------------------\n")
 
+    # Validation Loop
     for val_x, val_y in val_loader:
         val_x = val_x.to(device)
         val_y = val_y.to(device)
@@ -287,6 +289,8 @@ print("\n------------------------Testing Phase-----------------------------\n")
 
 # Testing Loop
 with torch.no_grad():
+
+num_correct = 0
 
     for test_x, test_y in test_loader:
         test_x = test_x.to(device)
