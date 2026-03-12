@@ -288,6 +288,7 @@ for epoch in range(NUM_EPOCHS):
 print("\n------------------------Testing Phase-----------------------------\n")
 
 # Testing Loop
+model.eval()
 with torch.no_grad():
 
     num_correct = 0
