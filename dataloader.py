@@ -247,7 +247,7 @@ model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 20
+NUM_EPOCHS = 1
 
 for epoch in range(NUM_EPOCHS):
 
@@ -288,18 +288,19 @@ for epoch in range(NUM_EPOCHS):
 print("\n------------------------Testing Phase-----------------------------\n")
 
 # Testing Loop
+with torch.no_grad():
 
-num_correct = 0
+    num_correct = 0
 
-for test_x, test_y in test_loader:
-    test_x = test_x.to(device)
-    test_y = test_y.to(device)
+    for test_x, test_y in test_loader:
+        test_x = test_x.to(device)
+        test_y = test_y.to(device)
         
-    test_preds = model(test_x)
-    loss = criterion(test_preds, test_y)
+        test_preds = model(test_x)
+        loss = criterion(test_preds, test_y)
 
-    _, class_preds = torch.max(test_preds, dim=1)
-    num_correct = num_correct + (class_preds == test_y).sum()
+        _, class_preds = torch.max(test_preds, dim=1)
+        num_correct = num_correct + (class_preds == test_y).sum()
     
 accuracy = num_correct/len(test_dataset)
 
