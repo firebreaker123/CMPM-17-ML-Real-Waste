@@ -188,7 +188,11 @@ print("Label name:", train_dataset.classes[label])
 """
 
 #dataLoaders for each dataset
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+if torch.cuda.is_available():
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=16, pin_memory=True)
+else:
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
 
