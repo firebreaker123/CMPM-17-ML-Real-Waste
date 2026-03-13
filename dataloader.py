@@ -12,6 +12,9 @@ import math
 from torchvision import datasets, transforms
 from torchvision.transforms import v2
 from torch.utils.data import DataLoader
+import wandb
+
+#run = wandb.init(project="Loss Graphs", name="model-run")
 
 imageIndex = 0
 
@@ -149,8 +152,8 @@ for batch in range(9):
 """
 
 #image transformations
-transformTrain = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
-transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224))])
+transformTrain = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale(), ])
+transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
 
 #path dataset folders
 train_dir = "dataset_split/train"
@@ -247,12 +250,18 @@ model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 20
+NUM_EPOCHS = 1
+
+train_loss = 0
+val_loss = 0
+test_loss = 0
+
+batchNum = 0
 
 for epoch in range(NUM_EPOCHS):
 
     num_correct = 0
-    
+    # Loss need to add all batches and divide by the batch
     # Training Loop
     for train_x, train_y in train_loader:
         train_x = train_x.to(device)
@@ -260,48 +269,66 @@ for epoch in range(NUM_EPOCHS):
 
         train_preds = model(train_x)
         loss = criterion(train_preds, train_y)
+        
+        train_loss = loss + train_loss
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
    
+    train_loss = train_loss/len(train_loader)
+
     print("\n------------------------Training Phase-----------------------------\n")
-    print(f"Epoch {epoch} | Loss: {loss.item()}")
+    print(f"Epoch {epoch} | Loss: {train_loss.item()}")
     
     print("\n------------------------Validation Phase-----------------------------\n")
 
+    num_correct = 0
+    
     # Validation Loop
-    for val_x, val_y in val_loader:
+    for val_x, val_y in val_loader:       
         val_x = val_x.to(device)
         val_y = val_y.to(device)
         
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
 
+        val_loss = loss + val_loss
+
         _, class_preds = torch.max(val_preds, dim=1)
         num_correct = num_correct + (class_preds == val_y).sum()
     
     accuracy = num_correct/len(val_dataset)
+    val_loss = val_loss/len(val_loader)
 
-    print(f"Epoch {epoch} | Loss: {loss.item()} Accuracy {accuracy * 100}")
+    print(f"Epoch {epoch} | Loss: {val_loss.item()} Accuracy {accuracy * 100}")
+
+    #run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
 print("\n------------------------Testing Phase-----------------------------\n")
 
 # Testing Loop
+model.eval()
 with torch.no_grad():
 
-num_correct = 0
+    num_correct = 0
 
     for test_x, test_y in test_loader:
+        batchNum = batchNum + 1
+        print(f"Batch {batchNum}")
+
         test_x = test_x.to(device)
         test_y = test_y.to(device)
         
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
 
+        test_loss = loss + test_loss
+
         _, class_preds = torch.max(test_preds, dim=1)
         num_correct = num_correct + (class_preds == test_y).sum()
     
     accuracy = num_correct/len(test_dataset)
+    test_loss = test_loss/len(test_loader)
 
-    print(f"Loss: {loss.item()} Accuracy {accuracy * 100}")
+    print(f"Loss: {test_loss.item()} Accuracy {accuracy * 100}")
