@@ -219,7 +219,11 @@ class Convnet(nn.Module):
         self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
         self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         self.conv4 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
-        
+        self.batchnorm1 = nn.BatchNorm2d(16)
+        self.batchnorm2 = nn.BatchNorm2d(32)
+        self.batchnorm3 = nn.BatchNorm2d(64)
+        self.batchnorm4 = nn.BatchNorm2d(128)
+
         self.relu = nn.ReLU()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
 
@@ -230,13 +234,21 @@ class Convnet(nn.Module):
 
         
     def forward(self, X):
-        X = self.relu(self.conv1(X))
+        X = self.conv1(X)
+        X= self.batchnorm1(X)
+        X = self.relu(X)
         X = self.pool(X)
-        X = self.relu(self.conv2(X))
+        X = self.conv2(X)
+        X= self.batchnorm2(X)
+        X = self.relu(X)
         X = self.pool(X)
-        X = self.relu(self.conv3(X))
+        X = self.conv3(X)
+        X= self.batchnorm3(X)
+        X = self.relu(X)
         X = self.pool(X)
-        X = self.relu(self.conv4(X))
+        X = self.conv4(X)
+        X = self.batchnorm4(X)
+        X = self.relu(X)
         X = self.pool(X)
         X = X.flatten(start_dim=1)
         X = self.relu(self.linear1(X))
