@@ -223,8 +223,11 @@ class Convnet(nn.Module):
         self.relu = nn.ReLU()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
 
+        self.dropout = nn.Dropout(0.3)
+
         self.linear1 = nn.Linear(128 * 14 * 14, 1028)
         self.linear2 = nn.Linear(1028, 9)
+
         
     def forward(self, X):
         X = self.relu(self.conv1(X))
@@ -241,13 +244,13 @@ class Convnet(nn.Module):
         return output
 
 model = Convnet()
-
+model.train()
 model.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
 optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 1
+NUM_EPOCHS = 5
 
 for epoch in range(NUM_EPOCHS):
 
