@@ -265,7 +265,7 @@ model.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
-optimizer = optim.Adam(model.parameters(), lr=0.002, weight_decay=0.01)
+optimizer = optim.Adam(model.parameters(), lr=0.002, weight_decay=0.2)
 NUM_EPOCHS = 20
 
 for epoch in range(NUM_EPOCHS):
