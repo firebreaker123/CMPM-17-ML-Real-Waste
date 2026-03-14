@@ -268,13 +268,8 @@ model.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
-<<<<<<< HEAD
-optimizer = optim.Adam(model.parameters(), lr=0.002, weight_decay=0.2)
-NUM_EPOCHS = 20
-=======
-optimizer = optim.Adam(model.parameters(), lr=0.002) #0.01 reduced accuracy from 62 to 55, 0.2 testing: FIX
+optimizer = optim.Adam(model.parameters(), lr=0.002)
 NUM_EPOCHS = 30
->>>>>>> refs/remotes/origin/main
 
 train_loss = 0
 val_loss = 0
