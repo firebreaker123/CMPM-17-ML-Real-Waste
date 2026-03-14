@@ -338,11 +338,6 @@ with torch.no_grad():
         num_correct = num_correct + (class_preds == test_y).sum()
     
 accuracy = num_correct/len(test_dataset)
-<<<<<<< HEAD
 test_loss = test_loss/len(test_loader)
 
 print(f"Loss: {test_loss.item()} Accuracy {accuracy * 100}")
-=======
-
-print(f"Loss: {loss.item()} Accuracy {accuracy * 100}")
->>>>>>> refs/remotes/origin/main
