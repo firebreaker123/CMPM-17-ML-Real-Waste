@@ -14,7 +14,7 @@ from torchvision.transforms import v2
 from torch.utils.data import DataLoader
 import wandb
 
-#run = wandb.init(project="Loss Graphs", name="model-run")
+run = wandb.init(project="Loss Graphs", name="Waste-model-run")
 
 imageIndex = 0
 
@@ -152,8 +152,8 @@ for batch in range(9):
 """
 
 #image transformations
-transformTrain = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale(), ])
-transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+transformTrain = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
+transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224))])
 
 #path dataset folders
 train_dir = "dataset_split/train"
@@ -191,7 +191,11 @@ print("Label name:", train_dataset.classes[label])
 """
 
 #dataLoaders for each dataset
-train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+if torch.cuda.is_available():
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=16, pin_memory=True)
+else:
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+
 val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
 
@@ -222,21 +226,36 @@ class Convnet(nn.Module):
         self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=1, padding=1)
         self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
         self.conv4 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
-        
+        self.batchnorm1 = nn.BatchNorm2d(16)
+        self.batchnorm2 = nn.BatchNorm2d(32)
+        self.batchnorm3 = nn.BatchNorm2d(64)
+        self.batchnorm4 = nn.BatchNorm2d(128)
+
         self.relu = nn.ReLU()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
 
+        self.dropout = nn.Dropout(0.3)
+
         self.linear1 = nn.Linear(128 * 14 * 14, 1028)
         self.linear2 = nn.Linear(1028, 9)
+
         
     def forward(self, X):
-        X = self.relu(self.conv1(X))
+        X = self.conv1(X)
+        X= self.batchnorm1(X)
+        X = self.relu(X)
         X = self.pool(X)
-        X = self.relu(self.conv2(X))
+        X = self.conv2(X)
+        X= self.batchnorm2(X)
+        X = self.relu(X)
         X = self.pool(X)
-        X = self.relu(self.conv3(X))
+        X = self.conv3(X)
+        X= self.batchnorm3(X)
+        X = self.relu(X)
         X = self.pool(X)
-        X = self.relu(self.conv4(X))
+        X = self.conv4(X)
+        X = self.batchnorm4(X)
+        X = self.relu(X)
         X = self.pool(X)
         X = X.flatten(start_dim=1)
         X = self.relu(self.linear1(X))
@@ -244,24 +263,22 @@ class Convnet(nn.Module):
         return output
 
 model = Convnet()
-
+model.train()
 model.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
-optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 1
+optimizer = optim.Adam(model.parameters(), lr=0.002, weight_decay=0.2)
+NUM_EPOCHS = 20
 
 train_loss = 0
 val_loss = 0
 test_loss = 0
 
-batchNum = 0
-
 for epoch in range(NUM_EPOCHS):
 
     num_correct = 0
-    # Loss need to add all batches and divide by the batch
+    
     # Training Loop
     for train_x, train_y in train_loader:
         train_x = train_x.to(device)
@@ -269,7 +286,6 @@ for epoch in range(NUM_EPOCHS):
 
         train_preds = model(train_x)
         loss = criterion(train_preds, train_y)
-        
         train_loss = loss + train_loss
 
         optimizer.zero_grad()
@@ -283,16 +299,13 @@ for epoch in range(NUM_EPOCHS):
     
     print("\n------------------------Validation Phase-----------------------------\n")
 
-    num_correct = 0
-    
     # Validation Loop
-    for val_x, val_y in val_loader:       
+    for val_x, val_y in val_loader:
         val_x = val_x.to(device)
         val_y = val_y.to(device)
         
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
-
         val_loss = loss + val_loss
 
         _, class_preds = torch.max(val_preds, dim=1)
@@ -303,7 +316,7 @@ for epoch in range(NUM_EPOCHS):
 
     print(f"Epoch {epoch} | Loss: {val_loss.item()} Accuracy {accuracy * 100}")
 
-    #run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
+    run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
 print("\n------------------------Testing Phase-----------------------------\n")
 
@@ -314,21 +327,17 @@ with torch.no_grad():
     num_correct = 0
 
     for test_x, test_y in test_loader:
-        batchNum = batchNum + 1
-        print(f"Batch {batchNum}")
-
         test_x = test_x.to(device)
         test_y = test_y.to(device)
         
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
-
         test_loss = loss + test_loss
 
         _, class_preds = torch.max(test_preds, dim=1)
         num_correct = num_correct + (class_preds == test_y).sum()
     
-    accuracy = num_correct/len(test_dataset)
-    test_loss = test_loss/len(test_loader)
+accuracy = num_correct/len(test_dataset)
+test_loss = test_loss/len(test_loader)
 
-    print(f"Loss: {test_loss.item()} Accuracy {accuracy * 100}")
+print(f"Loss: {test_loss.item()} Accuracy {accuracy * 100}")
