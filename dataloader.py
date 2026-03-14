@@ -265,8 +265,8 @@ model.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
-optimizer = optim.Adam(model.parameters(), lr=0.002, weight_decay=0.2)
-NUM_EPOCHS = 20
+optimizer = optim.Adam(model.parameters(), lr=0.002) #0.01 reduced accuracy from 62 to 55, 0.2 testing: FIX
+NUM_EPOCHS = 30
 
 for epoch in range(NUM_EPOCHS):
 
