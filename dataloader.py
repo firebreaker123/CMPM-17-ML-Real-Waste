@@ -12,6 +12,9 @@ import math
 from torchvision import datasets, transforms
 from torchvision.transforms import v2
 from torch.utils.data import DataLoader
+import wandb
+
+run = wandb.init(project="Loss Graphs", name="Waste-model-run")
 
 imageIndex = 0
 
@@ -265,8 +268,17 @@ model.to(device)
 
 criterion = nn.CrossEntropyLoss()
 
-optimizer = optim.Adam(model.parameters(), lr=0.002)
+<<<<<<< HEAD
+optimizer = optim.Adam(model.parameters(), lr=0.002, weight_decay=0.2)
+NUM_EPOCHS = 20
+=======
+optimizer = optim.Adam(model.parameters(), lr=0.002) #0.01 reduced accuracy from 62 to 55, 0.2 testing: FIX
 NUM_EPOCHS = 30
+>>>>>>> refs/remotes/origin/main
+
+train_loss = 0
+val_loss = 0
+test_loss = 0
 
 for epoch in range(NUM_EPOCHS):
 
@@ -279,13 +291,16 @@ for epoch in range(NUM_EPOCHS):
 
         train_preds = model(train_x)
         loss = criterion(train_preds, train_y)
+        train_loss = loss + train_loss
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
    
+    train_loss = train_loss/len(train_loader)
+
     print("\n------------------------Training Phase-----------------------------\n")
-    print(f"Epoch {epoch} | Loss: {loss.item()}")
+    print(f"Epoch {epoch} | Loss: {train_loss.item()}")
     
     print("\n------------------------Validation Phase-----------------------------\n")
 
@@ -296,13 +311,17 @@ for epoch in range(NUM_EPOCHS):
         
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
+        val_loss = loss + val_loss
 
         _, class_preds = torch.max(val_preds, dim=1)
         num_correct = num_correct + (class_preds == val_y).sum()
     
     accuracy = num_correct/len(val_dataset)
+    val_loss = val_loss/len(val_loader)
 
-    print(f"Epoch {epoch} | Loss: {loss.item()} Accuracy {accuracy * 100}")
+    print(f"Epoch {epoch} | Loss: {val_loss.item()} Accuracy {accuracy * 100}")
+
+    run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
 print("\n------------------------Testing Phase-----------------------------\n")
 
@@ -318,10 +337,17 @@ with torch.no_grad():
         
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
+        test_loss = loss + test_loss
 
         _, class_preds = torch.max(test_preds, dim=1)
         num_correct = num_correct + (class_preds == test_y).sum()
     
 accuracy = num_correct/len(test_dataset)
+<<<<<<< HEAD
+test_loss = test_loss/len(test_loader)
+
+print(f"Loss: {test_loss.item()} Accuracy {accuracy * 100}")
+=======
 
 print(f"Loss: {loss.item()} Accuracy {accuracy * 100}")
+>>>>>>> refs/remotes/origin/main
