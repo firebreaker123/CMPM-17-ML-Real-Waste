@@ -14,7 +14,7 @@ from torchvision.transforms import v2
 from torch.utils.data import DataLoader
 import wandb
 
-run = wandb.init(project="Loss Graphs", name="Waste-model-run")
+#run = wandb.init(project="Loss Graphs", name="Waste-model-run")
 
 imageIndex = 0
 
@@ -316,7 +316,7 @@ for epoch in range(NUM_EPOCHS):
 
     print(f"Epoch {epoch} | Loss: {val_loss.item()} Accuracy {accuracy * 100}")
 
-    run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
+    #run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
 print("\n------------------------Testing Phase-----------------------------\n")
 
