@@ -193,12 +193,12 @@ print("Label name:", train_dataset.classes[label])
 
 #dataLoaders for each dataset
 if torch.cuda.is_available():
-    train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True, num_workers=16, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=16, pin_memory=True)
 else:
-    train_loader = DataLoader(train_dataset, batch_size=12, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
 
-val_loader = DataLoader(val_dataset, batch_size=12, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=12, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=8, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=8, shuffle=True)
 
 """
 #loops
@@ -238,8 +238,8 @@ class Convnet(nn.Module):
         
         self.dropout = nn.Dropout(0.3)
 
-        self.linear1 = nn.Linear(128 * 7 * 7, 1028)
-        self.linear2 = nn.Linear(1028, 9)
+        self.linear1 = nn.Linear(128 * 7 * 7, 256) #initially 126 * 14 * 14, 1028
+        self.linear2 = nn.Linear(256, 9)
 
         
     def forward(self, X):
