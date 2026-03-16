@@ -193,12 +193,12 @@ print("Label name:", train_dataset.classes[label])
 
 #dataLoaders for each dataset
 if torch.cuda.is_available():
-    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=4, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True, num_workers=4, pin_memory=True)
 else:
-    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
+    train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
 
-val_loader = DataLoader(val_dataset, batch_size=8, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=8, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=16, shuffle=True)
+test_loader = DataLoader(test_dataset, batch_size=16, shuffle=True)
 
 """
 #loops
@@ -272,7 +272,7 @@ model.to(device)
 criterion = nn.CrossEntropyLoss()
 
 optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 50
+NUM_EPOCHS = 32
 
 train_loss = 0
 val_loss = 0
