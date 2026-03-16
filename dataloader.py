@@ -319,7 +319,7 @@ for epoch in range(NUM_EPOCHS):
     accuracy = num_correct/len(val_dataset)
     val_loss = val_loss/len(val_loader)
 
-    print(f"Epoch {epoch} | Loss: {val_loss)} Accuracy {accuracy * 100}")
+    print(f"Epoch {epoch} | Loss: {val_loss} Accuracy {accuracy * 100}")
 
     #run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
