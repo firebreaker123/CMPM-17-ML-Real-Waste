@@ -234,7 +234,7 @@ class Convnet(nn.Module):
 
         self.relu = nn.ReLU()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+        #self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
         
         self.dropout = nn.Dropout(0.3)
 
@@ -259,7 +259,7 @@ class Convnet(nn.Module):
         X = self.batchnorm4(X)
         X = self.relu(X)
         X = self.pool(X)
-        X = self.pool2(X)
+        #X = self.pool2(X)
         X = X.flatten(start_dim=1)
         X = self.relu(self.linear1(X))
         output = self.linear2(X)
