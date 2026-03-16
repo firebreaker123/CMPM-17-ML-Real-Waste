@@ -280,6 +280,8 @@ test_loss = 0
 
 for epoch in range(NUM_EPOCHS):
 
+    train_loss = 0
+    val_loss = 0
     num_correct = 0
     
     # Training Loop
@@ -289,7 +291,7 @@ for epoch in range(NUM_EPOCHS):
 
         train_preds = model(train_x)
         loss = criterion(train_preds, train_y)
-        train_loss = loss + train_loss
+        train_loss += loss.item()
 
         optimizer.zero_grad()
         loss.backward()
@@ -309,7 +311,7 @@ for epoch in range(NUM_EPOCHS):
         
         val_preds = model(val_x)
         loss = criterion(val_preds, val_y)
-        val_loss = loss + val_loss
+        val_loss += loss.item()
 
         _, class_preds = torch.max(val_preds, dim=1)
         num_correct = num_correct + (class_preds == val_y).sum()
@@ -335,7 +337,7 @@ with torch.no_grad():
         
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
-        test_loss = loss + test_loss
+        test_loss += loss.item()
 
         _, class_preds = torch.max(test_preds, dim=1)
         num_correct = num_correct + (class_preds == test_y).sum()
