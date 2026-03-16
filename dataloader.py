@@ -300,7 +300,7 @@ for epoch in range(NUM_EPOCHS):
     train_loss = train_loss/len(train_loader)
 
     print("\n------------------------Training Phase-----------------------------\n")
-    print(f"Epoch {epoch} | Loss: {train_loss.item()}")
+    print(f"Epoch {epoch} | Loss: {train_loss}")
     
     print("\n------------------------Validation Phase-----------------------------\n")
 
@@ -319,7 +319,7 @@ for epoch in range(NUM_EPOCHS):
     accuracy = num_correct/len(val_dataset)
     val_loss = val_loss/len(val_loader)
 
-    print(f"Epoch {epoch} | Loss: {val_loss.item()} Accuracy {accuracy * 100}")
+    print(f"Epoch {epoch} | Loss: {val_loss)} Accuracy {accuracy * 100}")
 
     #run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
@@ -327,22 +327,23 @@ print("\n------------------------Testing Phase-----------------------------\n")
 
 # Testing Loop
 model.eval()
+
+num_correct = 0
+test_loss = 0
+
 with torch.no_grad():
-
-    num_correct = 0
-
     for test_x, test_y in test_loader:
         test_x = test_x.to(device)
         test_y = test_y.to(device)
-        
+
         test_preds = model(test_x)
         loss = criterion(test_preds, test_y)
         test_loss += loss.item()
 
         _, class_preds = torch.max(test_preds, dim=1)
-        num_correct = num_correct + (class_preds == test_y).sum()
-    
-accuracy = num_correct/len(test_dataset)
-test_loss = test_loss/len(test_loader)
+        num_correct += (class_preds == test_y).sum()
 
-print(f"Loss: {test_loss.item()} Accuracy {accuracy * 100}")
+accuracy = num_correct / len(test_dataset)
+test_loss = test_loss / len(test_loader)
+
+print(f"Loss: {test_loss} Accuracy {accuracy * 100}")
