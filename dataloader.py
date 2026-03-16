@@ -193,7 +193,7 @@ print("Label name:", train_dataset.classes[label])
 
 #dataLoaders for each dataset
 if torch.cuda.is_available():
-    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=16, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True, num_workers=4, pin_memory=True)
 else:
     train_loader = DataLoader(train_dataset, batch_size=8, shuffle=True)
 
@@ -234,11 +234,11 @@ class Convnet(nn.Module):
 
         self.relu = nn.ReLU()
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        #self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
         
         self.dropout = nn.Dropout(0.3)
 
-        self.linear1 = nn.Linear(128 * 14 * 14, 256) #initially 126 * 14 * 14, 1028
+        self.linear1 = nn.Linear(128 * 7 * 7, 256) #initially 126 * 14 * 14, 1028
         self.linear2 = nn.Linear(256, 9)
 
         
@@ -259,7 +259,7 @@ class Convnet(nn.Module):
         X = self.batchnorm4(X)
         X = self.relu(X)
         X = self.pool(X)
-        #X = self.pool2(X)
+        X = self.pool2(X)
         X = X.flatten(start_dim=1)
         X = self.relu(self.linear1(X))
         output = self.linear2(X)
