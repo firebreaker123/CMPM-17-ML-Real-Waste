@@ -238,7 +238,7 @@ class Convnet(nn.Module):
         
         self.dropout = nn.Dropout(0.3)
 
-        self.linear1 = nn.Linear(128 * 7 * 7, 256) #initially 126 * 14 * 14, 1028
+        self.linear1 = nn.Linear(128 * 14 * 14, 256) #initially 126 * 14 * 14, 1028
         self.linear2 = nn.Linear(256, 9)
 
         
