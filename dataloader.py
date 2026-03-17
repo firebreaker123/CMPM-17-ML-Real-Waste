@@ -12,7 +12,7 @@ import math
 from torchvision import datasets, transforms
 from torchvision.transforms import v2
 from torch.utils.data import DataLoader
-import wandb
+#import wandb
 
 run = wandb.init(project="Loss Graphs", name="Waste-model-run")
 
@@ -322,7 +322,7 @@ if __name__ == '__main__':
 
         print(f"Epoch {epoch} | Loss: {val_loss} Accuracy {accuracy * 100}")
 
-        run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
+        #run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
     print("\n------------------------Testing Phase-----------------------------\n")
 
