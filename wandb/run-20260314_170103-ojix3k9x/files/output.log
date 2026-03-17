@@ -1,0 +1,8 @@
+C:\Users\cyanb\AppData\Roaming\Python\Python314\site-packages\torchvision\transforms\v2\_deprecated.py:42: UserWarning: The transform `ToTensor()` is deprecated and will be removed in a future release. Instead, please use `v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])`.Output is equivalent up to float precision.
+  warnings.warn(
+
+------------------------Training Phase-----------------------------
+
+Epoch 0 | Loss: 4.206867218017578
+
+------------------------Validation Phase-----------------------------

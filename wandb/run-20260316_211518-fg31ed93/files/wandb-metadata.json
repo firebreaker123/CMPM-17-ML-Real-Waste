@@ -1,0 +1,40 @@
+{
+  "os":  "Windows-11-10.0.26200-SP0",
+  "python":  "CPython 3.14.0",
+  "startedAt":  "2026-03-17T04:15:18.646114Z",
+  "program":  "C:\\CMPM17-ML\\CMPM-17-ML-Real-Waste\\demo.py",
+  "codePath":  "demo.py",
+  "codePathLocal":  "demo.py",
+  "git":  {
+    "remote":  "https://github.com/firebreaker123/CMPM-17-ML-Real-Waste.git",
+    "commit":  "a8b59131739842b66aacbee277c6c059518650b8"
+  },
+  "email":  "dbatbold@ucsc.edu",
+  "root":  "C:\\CMPM17-ML\\CMPM-17-ML-Real-Waste",
+  "host":  "LAPTOP-HPMVTQ57",
+  "executable":  "C:\\Python314\\python.exe",
+  "cpu_count":  6,
+  "cpu_count_logical":  12,
+  "gpu":  "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "510770802688",
+      "used":  "359260762112"
+    }
+  },
+  "memory":  {
+    "total":  "6287331328"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 3050 Ti Laptop GPU",
+      "memoryTotal":  "4294967296",
+      "cudaCores":  2560,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-e9f24c8a-ac94-e547-7132-f7e339fdb672"
+    }
+  ],
+  "cudaVersion":  "12.5",
+  "writerId":  "nk7p6kavohamo4hat5jm2gs1axak4z84"
+}

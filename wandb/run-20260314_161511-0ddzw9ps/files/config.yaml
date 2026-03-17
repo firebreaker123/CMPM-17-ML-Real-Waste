@@ -1,0 +1,53 @@
+_wandb:
+    value:
+        cli_version: 0.25.0
+        e:
+            bh7fsvguc9nt1rrcr8it3548gwj3t0yt:
+                codePath: dataloader.py
+                codePathLocal: dataloader.py
+                cpu_count: 6
+                cpu_count_logical: 12
+                cudaVersion: "12.5"
+                disk:
+                    /:
+                        total: "510770802688"
+                        used: "357130649600"
+                email: dbatbold@ucsc.edu
+                executable: C:\Python314\python.exe
+                git:
+                    commit: a88face2a69b54da4ced59012aaca7a917e2a03a
+                    remote: https://github.com/firebreaker123/CMPM-17-ML-Real-Waste.git
+                gpu: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 2560
+                      memoryTotal: "4294967296"
+                      name: NVIDIA GeForce RTX 3050 Ti Laptop GPU
+                      uuid: GPU-e9f24c8a-ac94-e547-7132-f7e339fdb672
+                host: LAPTOP-HPMVTQ57
+                memory:
+                    total: "6287331328"
+                os: Windows-11-10.0.26200-SP0
+                program: C:\CMPM17-ML\CMPM-17-ML-Real-Waste\dataloader.py
+                python: CPython 3.14.0
+                root: C:\CMPM17-ML\CMPM-17-ML-Real-Waste
+                startedAt: "2026-03-14T23:15:11.505849Z"
+                writerId: bh7fsvguc9nt1rrcr8it3548gwj3t0yt
+        m: []
+        python_version: 3.14.0
+        t:
+            "1":
+                - 1
+                - 41
+            "2":
+                - 1
+                - 41
+            "3":
+                - 13
+            "4": 3.14.0
+            "5": 0.25.0
+            "8":
+                - 3
+            "12": 0.25.0
+            "13": windows-amd64
