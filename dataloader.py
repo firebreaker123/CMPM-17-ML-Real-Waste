@@ -14,7 +14,7 @@ from torchvision.transforms import v2
 from torch.utils.data import DataLoader
 #import wandb
 
-run = wandb.init(project="Loss Graphs", name="Waste-model-run")
+#run = wandb.init(project="Loss Graphs", name="Waste-model-run")
 
 imageIndex = 0
 
@@ -352,3 +352,4 @@ if __name__ == '__main__':
     print("finished training, saving model")
 
     torch.save(model.state_dict(), "real_waste_model.pt")
+    #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
