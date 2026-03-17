@@ -264,85 +264,91 @@ class Convnet(nn.Module):
         output = self.linear2(X)
         return output
 
-model = Convnet()
-model.train()
-model.to(device)
+if __name__ == '__main__':
 
-criterion = nn.CrossEntropyLoss()
+    model = Convnet()
+    model.train()
+    model.to(device)
 
-optimizer = optim.Adam(model.parameters(), lr=0.002)
-NUM_EPOCHS = 32
+    criterion = nn.CrossEntropyLoss()
 
-train_loss = 0
-val_loss = 0
-test_loss = 0
-
-for epoch in range(NUM_EPOCHS):
+    optimizer = optim.Adam(model.parameters(), lr=0.002)
+    NUM_EPOCHS = 32
 
     train_loss = 0
     val_loss = 0
-    num_correct = 0
+    test_loss = 0
+
+    for epoch in range(NUM_EPOCHS):
+
+        train_loss = 0
+        val_loss = 0
+        num_correct = 0
     
-    # Training Loop
-    for train_x, train_y in train_loader:
-        train_x = train_x.to(device)
-        train_y = train_y.to(device)
+        # Training Loop
+        for train_x, train_y in train_loader:
+            train_x = train_x.to(device)
+            train_y = train_y.to(device)
 
-        train_preds = model(train_x)
-        loss = criterion(train_preds, train_y)
-        train_loss += loss.item()
+            train_preds = model(train_x)
+            loss = criterion(train_preds, train_y)
+            train_loss += loss.item()
 
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
    
-    train_loss = train_loss/len(train_loader)
+        train_loss = train_loss/len(train_loader)
 
-    print("\n------------------------Training Phase-----------------------------\n")
-    print(f"Epoch {epoch} | Loss: {train_loss}")
+        print("\n------------------------Training Phase-----------------------------\n")
+        print(f"Epoch {epoch} | Loss: {train_loss}")
     
-    print("\n------------------------Validation Phase-----------------------------\n")
+        print("\n------------------------Validation Phase-----------------------------\n")
 
-    # Validation Loop
-    for val_x, val_y in val_loader:
-        val_x = val_x.to(device)
-        val_y = val_y.to(device)
+        # Validation Loop
+        for val_x, val_y in val_loader:
+            val_x = val_x.to(device)
+            val_y = val_y.to(device)
         
-        val_preds = model(val_x)
-        loss = criterion(val_preds, val_y)
-        val_loss += loss.item()
+            val_preds = model(val_x)
+            loss = criterion(val_preds, val_y)
+            val_loss += loss.item()
 
-        _, class_preds = torch.max(val_preds, dim=1)
-        num_correct = num_correct + (class_preds == val_y).sum()
+            _, class_preds = torch.max(val_preds, dim=1)
+            num_correct = num_correct + (class_preds == val_y).sum()
     
-    accuracy = num_correct/len(val_dataset)
-    val_loss = val_loss/len(val_loader)
+        accuracy = num_correct/len(val_dataset)
+        val_loss = val_loss/len(val_loader)
 
-    print(f"Epoch {epoch} | Loss: {val_loss} Accuracy {accuracy * 100}")
+        print(f"Epoch {epoch} | Loss: {val_loss} Accuracy {accuracy * 100}")
 
-    run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
+        run.log({"Train Loss" : train_loss, "Validation Loss" : val_loss})
 
-print("\n------------------------Testing Phase-----------------------------\n")
+    print("\n------------------------Testing Phase-----------------------------\n")
 
-# Testing Loop
-model.eval()
+    # Testing Loop
+    model.eval()
 
-num_correct = 0
-test_loss = 0
+    num_correct = 0
+    test_loss = 0
 
-with torch.no_grad():
-    for test_x, test_y in test_loader:
-        test_x = test_x.to(device)
-        test_y = test_y.to(device)
+    with torch.no_grad():
+        for test_x, test_y in test_loader:
+            test_x = test_x.to(device)
+            test_y = test_y.to(device)
 
-        test_preds = model(test_x)
-        loss = criterion(test_preds, test_y)
-        test_loss += loss.item()
+            test_preds = model(test_x)
+            loss = criterion(test_preds, test_y)
+            test_loss += loss.item()
 
-        _, class_preds = torch.max(test_preds, dim=1)
-        num_correct += (class_preds == test_y).sum()
+            _, class_preds = torch.max(test_preds, dim=1)
+            num_correct += (class_preds == test_y).sum()
 
-accuracy = num_correct / len(test_dataset)
-test_loss = test_loss / len(test_loader)
+    accuracy = num_correct / len(test_dataset)
+    test_loss = test_loss / len(test_loader)
 
-print(f"Loss: {test_loss} Accuracy {accuracy * 100}")
+    print(f"Loss: {test_loss} Accuracy {accuracy * 100}")
+
+    print("finished training, saving model")
+
+    torch.save(model.state_dict(), "real_waste_model.pt")
