@@ -153,7 +153,7 @@ for batch in range(9):
 
 #image transformations
 transformTrain = v2.Compose([v2.ToTensor(), v2.Resize((224, 224)), v2.RandomHorizontalFlip(0.3), v2.ColorJitter(0.5, 0.3, 0.3), v2.RandomGrayscale()])
-transform = v2.Compose([v2.ToTensor(), v2.Resize((224, 224))], v2.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]))
+transform = v2.Compose([v2.ToTensor(),v2.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]), v2.Resize((224, 224))])
 
 #path dataset folders
 train_dir = "dataset_split/train"
